@@ -27,8 +27,7 @@ export const ProductProvider = ({children, productData})=>{
       console.log(productData[0].imgs)
       setImages(productData[0].imgs)
       setThumbnails(productData[0].imgs)
-      setPreviewImg(productData[0].imgs[0])
-
+      setPreviewImg(productData[0].image)
     }
   }, [productData])
 
@@ -71,20 +70,23 @@ export const ProductProvider = ({children, productData})=>{
 
   const thumbnailActive = ()=>{
     // REMOVE STYLE FROM INACITVE THUMBNAIL
-    thumbnailRef.current.childNodes.forEach(img=>{
-      img.classList.remove('border-2', 'border-orange')
-      img.firstElementChild.classList.remove('opacity-50')
-    })
-    
-    // STYLE ACITVE THUMBNAIL
-    return (
-      thumbnailRef.current.childNodes[currentIndex].classList.add('border-2', 'border-orange'),
-      thumbnailRef.current.childNodes[currentIndex].firstElementChild.classList.add('opacity-50')
-    )
+    if(images.length > 0) {
+      thumbnailRef.current.childNodes.forEach(img=>{
+        img.classList.remove('border-2', 'border-orange')
+        img.firstElementChild.classList.remove('opacity-50')
+      })
+      
+      // STYLE ACITVE THUMBNAIL
+      // return (
+      //   thumbnailRef.current.childNodes[currentIndex].classList.add('border-2', 'border-orange'),
+      //   thumbnailRef.current.childNodes[currentIndex].firstElementChild.classList.add('opacity-50')
+      // )
+    }
+
   }
 
   const modalThumbnailActive = ()=>{
-    if(modal){
+    if(images.length > 0 && modal ) {
       // REMOVE STYLE FROM INACITVE THUMBNAIL
       let modalThumbnailImgs = modalThumbnailRef.current.parentElement.childNodes
       modalThumbnailImgs.forEach(img=>{
@@ -93,10 +95,10 @@ export const ProductProvider = ({children, productData})=>{
       })
 
       // STYLE ACITVE THUMBNAIL
-      return( 
-        modalThumbnailImgs[currentIndex].classList.add('border-2', 'border-orange'),
-        modalThumbnailImgs[currentIndex].firstElementChild.classList.add('opacity-50')
-      )
+      // return( 
+      //   modalThumbnailImgs[currentIndex].classList.add('border-2', 'border-orange'),
+      //   modalThumbnailImgs[currentIndex].firstElementChild.classList.add('opacity-50')
+      // )
     }
   }
 

@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../components/Icons/Spinner'
 import { userActions } from '../store/userSlice'
+import { useNavigate } from "react-router-dom"
 
 const Login = () => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [user, setUser] = useState<any>({} || undefined)
@@ -27,6 +29,7 @@ const Login = () => {
                 setSuccess(true)
                 setError(false)
                 dispatch(userActions.signIn({name: res.user.name, email: res.user.email, token: res.user.pass}))
+                navigate('/dashboard')
             }
         })
         setLoading(false)
