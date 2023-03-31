@@ -6,6 +6,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import { categories } from '../constants'
 import axios from 'axios'
 import useSWR from 'swr'
+import Modal from '../components/compare'
+
+
 
 const sortOptions = [
   { name: 'الأكثر شهرة', href: '#', current: true },
@@ -304,15 +307,13 @@ const Category: FC<any> = () => {
                     </Disclosure>
                     ))}
                 </form>
-
                 {/* Product grid */}
+                
                 <div className="lg:col-span-3">
                     {isLoading ?
                             <div className="flex justify-center items-center h-screen">
                                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-400"></div>
                             </div> :
-
-
                         <div className="grid grid-cols-1 gap-2">
                         {filteredProducts && filteredProducts.map((product: any, i: number) => (    
                             <div key={i} className="w-full flex flex-row p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -330,10 +331,16 @@ const Category: FC<any> = () => {
                                             ))}
                                             <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">{product.reviews}</span>
                                         </div>
-                                    )}
+
+                                    )}                
+
                                     <div className="flex items-center justify-between">
+
                                         <span className="text-3xl font-bold text-gray-900 dark:text-white">{product.price}</span>
-                                        <a onClick={() => navigate(`/product/${category}/${product._id}`)} className="text-black cursor-pointer bg-white shadow-2xl hover:text-gray-500 hover:bg-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center">المزيد عن المنتج</a>
+                                        
+                                    </div>
+                                    <div className="flex items-center justify-center ml-60 mt-10">
+                                    <a onClick={() => navigate(`/product/${category}/${product._id}`)} className="text-black cursor-pointer bg-white shadow-2xl hover:text-gray-500 hover:bg-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center justify-content: center">المزيد عن المنتج</a> 
                                     </div>
                                 </div>
                             </div>
