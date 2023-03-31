@@ -7,3 +7,8 @@
   font-family: 'Montserrat', sans-serif;
   font-family: 'Tajawal', sans-serif;
 }
+
+.flip {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}

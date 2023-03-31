@@ -1,10 +1,12 @@
 import { FC, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import useCurrentPath from "../hooks/useCurrentPath"
+import { useSelector } from "react-redux"
+// import useCurrentPath from "../hooks/useCurrentPath"
 
 const Navbar: FC<Record<string, never>> = (() => {
   const navigate = useNavigate()
-  const currentPath = useCurrentPath()
+  const token = useSelector((state: any) => state.user.token)
+  // const currentPath = useCurrentPath()
   const [dropDownOpen, setDropDownOpen] = useState(false)
 
   const openCategory = (category: string) => {
@@ -12,12 +14,18 @@ const Navbar: FC<Record<string, never>> = (() => {
     setDropDownOpen(!dropDownOpen)
   }
 
+  const openDashboard = () => {
+    if(token) navigate('/dashboard')
+    else navigate('/login')
+  }
+
   const isActiveClass = ((pathname: string) => {
-    const classProps = currentPath![0].pathname === pathname ?
-    "block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" 
-    :
-    "block py-2 pr-4 pl-3rounded border-b border-volta-gray-100 hover:bg-volta-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-volta-gray-100 lg:dark:hover:text-white dark:hover:bg-volta-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-volta-gray-700"
-    return classProps
+    // const classProps = currentPath![0].pathname === pathname ?
+    // "block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" 
+    // :
+    // "block py-2 pr-4 pl-3rounded border-b border-volta-gray-100 hover:bg-volta-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-volta-gray-100 lg:dark:hover:text-white dark:hover:bg-volta-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-volta-gray-700"
+    // return classProps
+    return ''
   })
 
   return (
@@ -28,7 +36,7 @@ const Navbar: FC<Record<string, never>> = (() => {
           <button onClick={() => navigate('/')} className="flex items-center">
             <span className="text-xl self-start font-extrabold whitespace-nowrap text-black">Laptopify</span>
           </button>
-          <div className="flex items-center lg:order-2">
+          <div className="items-center flex lg:hidden lg:order-2">
             <button data-collapse-toggle="mobile-menu-2" type="button" className="inline-flex items-center p-2 ml-1 text-sm text-volta-gray-500 rounded-lg lg:hidden hover:bg-volta-gray-100 focus:outline-none focus:ring-2 focus:ring-volta-gray-200 dark:text-volta-gray-400 dark:hover:bg-volta-gray-700 dark:focus:ring-volta-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
               <span className="sr-only">Open main menu</span>
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
@@ -87,6 +95,13 @@ const Navbar: FC<Record<string, never>> = (() => {
                 )}
               </li>
             </ul>
+          </div>
+          <div className="lg:order-2">
+            <a onClick={() => openDashboard()} className="flex font-medium text-gray-700 items-center cursor-pointer">
+              {token ?
+              'لوحة التحكم':
+              'تسجيل الدخول'}
+            </a>
           </div>
         </div>
       </nav>

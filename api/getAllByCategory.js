@@ -1,5 +1,6 @@
 "use strict";
 // Import the dependency.
+process.env.MONGO_DB = "Amazon"
 const clientPromise = require('../api-utils/mongo-client');
 
 module.exports = async (req, res) => {

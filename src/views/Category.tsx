@@ -4,17 +4,17 @@ import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from
 import { FC, useEffect, useState, Fragment } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { categories } from '../constants'
+import ReactStars from 'react-stars'
+import arraySort from 'array-sort'
 import axios from 'axios'
 import useSWR from 'swr'
 import Modal from '../components/compare'
 
-
-
 const sortOptions = [
-  { name: 'الأكثر شهرة', href: '#', current: true },
-  { name: 'أعلي تقييم', href: '#', current: false },
-  { name: 'السعر: من الأدنى الى الأعلى', href: '#', current: false },
-  { name: 'السعر: من الأعلى الى الأدنى', href: '#', current: false },
+  { name: 'الأكثر شهرة', key: 'Popularity'},
+  { name: 'أعلي تقييم', key: 'Rating'},
+  { name: 'السعر: من الأدنى الى الأعلى', key: 'priceUp'},
+  { name: 'السعر: من الأعلى الى الأدنى', key: 'priceDown'},
 ]
 
 function classNames(...classes) {
@@ -34,6 +34,8 @@ const Category: FC<any> = () => {
     const [filtersKeys, setFiltersKeys] = useState<any>([])
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const [selectedFilters, setSelectedFilters] = useState<any>([])
+    const [sortBy, setSortBy] = useState(sortOptions[0])
+    const [sortedProducts, setSortedProducts] = useState<any>([])
 
     const getProductsFilters = (products: any) => {
         const keys = new Set()
@@ -77,6 +79,40 @@ const Category: FC<any> = () => {
     }, [data])
 
     useEffect(() => {
+        if (sortBy) {
+            let sortedProducts = [...filteredProducts].map((product: any) => {
+                console.log(product)
+                product.price = product.price.replace(/\D/g,'')
+                product.price = Number.parseFloat(product.price)
+                return product
+            })
+            switch (sortBy.key) {
+                case 'Popularity':
+                    sortedProducts = arraySort(sortedProducts, 'reviews', { reverse: true })
+                    break
+                case 'Rating':
+                    sortedProducts = arraySort(sortedProducts, 'stars', { reverse: true })
+                    break
+                case 'priceUp':
+                    sortedProducts = arraySort(sortedProducts, 'price')
+                    break
+                case 'priceDown':
+                    sortedProducts = arraySort(sortedProducts, 'price', { reverse: true })
+                    break
+                default:
+                    break
+            }
+            sortedProducts = sortedProducts.map((product: any) => {
+                product.price = product.price.toString()
+                product.price = product.price.slice(0, -2) + '.' + product.price.slice(-2)
+                product.price = product.price + ' ريال'
+                return product
+            })
+            setSortedProducts(sortedProducts)
+        }
+    }, [filteredProducts, sortBy])
+
+    useEffect(() => {
         if (selectedFilters.length > 0) {
             let filteredProducts = products.filter((product: any) => {
                 let traits = Object.values(product.details)
@@ -89,6 +125,7 @@ const Category: FC<any> = () => {
                 if(p) return p
             })
             setFilteredProducts(filteredProducts)
+            console.log(filteredProducts)
         } else {
             setFilteredProducts(products)
         }
@@ -195,7 +232,8 @@ const Category: FC<any> = () => {
                 <Menu as="div" className="relative inline-block text-left">
                     <div>
                     <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                        ترتيب حسب
+                        ترتيب حسب :  
+                        <strong className='mr-1'>{sortBy.name}</strong>
                         <ChevronDownIcon
                         className="ml-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                         aria-hidden="true"
@@ -217,16 +255,16 @@ const Category: FC<any> = () => {
                         {sortOptions.map((option) => (
                             <Menu.Item key={option.name}>
                             {({ active }) => (
-                                <a
-                                href={option.href}
+                                <div
+                                onClick={() => {setSortBy(option)}}
                                 className={classNames(
-                                    option.current ? 'font-medium text-gray-900 text-right' : 'text-gray-500 text-right',
+                                    option.name === sortBy.name ? 'font-medium text-gray-900 text-right cursor-pointer' : 'text-gray-500 text-right cursor-pointer',
                                     active ? 'bg-gray-100' : '',
                                     'block px-4 py-2 text-sm'
                                 )}
                                 >
                                 {option.name}
-                                </a>
+                                </div>
                             )}
                             </Menu.Item>
                         ))}
@@ -315,10 +353,12 @@ const Category: FC<any> = () => {
                                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-400"></div>
                             </div> :
                         <div className="grid grid-cols-1 gap-2">
-                        {filteredProducts && filteredProducts.map((product: any, i: number) => (    
+                        {sortedProducts && sortedProducts.map((product: any, i: number) => (    
                             <div key={i} className="w-full flex flex-row p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                                 <div className="basis-1/4">
-                                    <img width={300} className="p-8 rounded-t-lg" src={product.image} alt="product image" />
+                                    <div>
+                                        <img width={300} className="p-8 rounded-t-lg" src={product.image} alt="product image" />
+                                    </div>
                                 </div>
                                 <div className="px-5 py-6 basis-3/4">
                                     <a href="#">
@@ -326,12 +366,22 @@ const Category: FC<any> = () => {
                                     </a>
                                     {product.stars && (
                                         <div className="flex items-center mt-2.5 mb-5">
-                                            {[...Array(Math.round(product.stars))].map((_, i) => (
-                                                <svg key={i} aria-hidden="true" className="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Second star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                            ))}
+                                            {/* {[...Array(Math.round(product.stars))].map((_, i) => (
+                                                <svg key={i} aria-hidden="true" className="w-6 h-6 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Second star</title><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                            ))} */}
+                                            <div className='text-black cursor-pointer font-bold text-sm ml-1'>
+                                                {product.stars}
+                                            </div>
+                                            <div dir='ltr' className='flip'>
+                                                <ReactStars
+                                                count={5}
+                                                value={product.stars}
+                                                size={24}
+                                                edit={false}
+                                                color2={'#ffd700'} />
+                                            </div>
                                             <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">{product.reviews}</span>
                                         </div>
-
                                     )}                
 
                                     <div className="flex items-center justify-between">

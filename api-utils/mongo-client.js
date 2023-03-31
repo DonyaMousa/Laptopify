@@ -1,7 +1,8 @@
 // Import the dependency.
 require('dotenv').config()
 const { MongoClient } = require('mongodb');
-const uri = process.env.MONGO_URI
+const uri = `${process.env.MONGO_URI}/${process.env.MONGO_DB}?${process.env.MONGO_PARAMS}`
+console.log(uri)
 const options = {
    useUnifiedTopology: true,
    useNewUrlParser: true,
