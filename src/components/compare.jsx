@@ -73,6 +73,7 @@ const CompareModal = ({ selectedProducts }) => {
 };
 
 export default Products;
+export { CompareModal };
 
 
 

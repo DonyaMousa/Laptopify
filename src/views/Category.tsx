@@ -8,7 +8,16 @@ import ReactStars from 'react-stars'
 import arraySort from 'array-sort'
 import axios from 'axios'
 import useSWR from 'swr'
-import Modal from '../components/compare'
+import shipping from '../assets/shipping.png'
+import { FaAlignJustify, FaAlignLeft } from 'react-icons/fa'
+import handlecompare from '../components/compare'
+import Products from '../components/compare'
+
+
+
+
+
+
 
 const sortOptions = [
   { name: 'الأكثر شهرة', key: 'Popularity'},
@@ -382,15 +391,56 @@ const Category: FC<any> = () => {
                                             </div>
                                             <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">{product.reviews}</span>
                                         </div>
-                                    )}                
+                                    )}               
 
                                     <div className="flex items-center justify-between">
-
                                         <span className="text-3xl font-bold text-gray-900 dark:text-white">{product.price}</span>
-                                        
-                                    </div>
-                                    <div className="flex items-center justify-center ml-60 mt-10">
+                                        </div>
+
+
+                                        <div className="flex  flex-col items-center justify-end">
+
+                                            <a className="text-1xl font-soft text-gray-900 dark:text-white">توصيل مجاني</a> 
+                                            <img className='opject-right'   src={shipping}> 
+                                            </img>
+                                        </div>
+
+
+                                    <div className="flex items-center justify-center ml-40 mt-10">
                                     <a onClick={() => navigate(`/product/${category}/${product._id}`)} className="text-black cursor-pointer bg-white shadow-2xl hover:text-gray-500 hover:bg-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center justify-content: center">المزيد عن المنتج</a> 
+
+
+                                    
+
+
+
+                               
+
+
+                                    
+                                    
+
+
+
+                                    
+
+
+                                   
+
+                                        
+
+
+
+
+
+
+
+
+                                    
+
+
+                                            
+                                    
                                     </div>
                                 </div>
                             </div>
@@ -398,6 +448,12 @@ const Category: FC<any> = () => {
                         </div>
                         }
                 </div>
+
+
+
+
+
+
                 </div>
             </section>
             </main>

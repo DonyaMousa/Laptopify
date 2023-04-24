@@ -26,6 +26,7 @@ import {
 //   import { Pagination } from "../users/list";
   
   const Dashboard : FC = function () {
+    // inc
     return (
       <div>
         <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
